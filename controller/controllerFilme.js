@@ -128,6 +128,7 @@ const excluirFilme = async function (id){
           return message.ERROR_INTERNAL_SERVER_CONTROLLER //500
    }
 }
+
 //Funcão para tratar o retorno de filmes do DAO
 const listarFilme = async function (){
     try {
