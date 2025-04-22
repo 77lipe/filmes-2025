@@ -1,22 +1,28 @@
-const message = require('../modulo/config.js')
-const idadeDAO = require('../model/DAO/idadeInd.js')
+/************************************************************************************
+ * Objetivo: Controller responsável pela regra de negócio referente ao CRUD de Linguagem
+ * Data: 18/02/2025
+ * Autor: Felipe Vieira dos Santos
+ * Versão: 1.0
+************************************************************************************/
 
-//Funcão para tratar a inserção de um novo genero no DAO
-const inserirIdade = async function (idade, contentType) {
+const message = require('../modulo/config.js')
+const sexoDAO = require('../model/DAO/sexo.js')
+
+//Funcão para tratar a inserção de um novo filme no DAO
+const inserirSexo = async function (sexo, contentType) {
 
     try {
 
         if (String(contentType).toLocaleLowerCase() == 'application/json') {
 
-            if (idade.idadeIndicativa == '' || idade.idadeIndicativa == undefined || idade.idadeIndicativa == null || idade.idadeIndicativa.length > 15 ||
-                idade.descricao                   == ''   ||  idade.descricao          == undefined    || idade.descricao            == null     
-             ) {
+            if (sexo.sexo == '' || sexo.sexo == undefined || sexo.sexo == null || sexo.sexo.length > 45
+            ) {
                 return message.ERROR_REQUIRED_FIELDS //400
             } else {
                 //Chama a função para inserir no BD e aguarda o retorno da função 
-                let resultIdade = await idadeDAO.inserirIdadeInd(idade)
+                let resultsexo = await sexoDAO.inserirSexo(sexo)
 
-                if (resultIdade) {
+                if (resultsexo) {
                     return message.SUCCESS_CREATED_ITEM //201
                 } else
                     return message.ERROR_INTERNAL_SERVER //500
@@ -31,28 +37,27 @@ const inserirIdade = async function (idade, contentType) {
 }
 
 //Funcão para tratar a atualização de um novo genero no DAO
-const atualizarIdade = async function (id, idade, contentType) {
+const atualizarSexo = async function (id, sexo, contentType) {
     try {
         if (String(contentType).toLocaleLowerCase() == 'application/json') {
 
             if (id == '' || id == undefined || id == null || isNaN(id) || id <= 0 ||
-            idade.idadeIndicativa == '' || idade.idadeIndicativa == undefined || idade.idadeIndicativa == null || idade.idadeIndicativa.length > 15 ||
-            idade.descricao                   == ''   ||  idade.descricao          == undefined    || idade.descricao            == null     
+            sexo.sexo == '' || sexo.sexo == undefined || sexo.sexo == null || sexo.sexo.length > 45
 
             ) {
                 return message.ERROR_REQUIRED_FIELDS //400
             } else {
                 //Validação para verificar se o ID existe no BD
-                let resultIdade = await idadeDAO.selectByIdIdadeInd(parseInt(id))
+                let resultSexo = await sexoDAO.selectByIdSexo(parseInt(id))
 
-                if (resultIdade != false || typeof (resultIdade) == 'object') {
-                    if (resultIdade.length > 0) {
+                if (resultSexo != false || typeof (resultSexo) == 'object') {
+                    if (resultSexo.length > 0) {
                         //Update
 
                         //adiciona o ID do filme no JSON com os dados
-                        idade.id = parseInt(id)
+                        sexo.id = parseInt(id)
 
-                        let result = await idadeDAO.atualizarIdadeInd(idade)
+                        let result = await sexoDAO.atualizarSexo(sexo)
                         if (result) {
                             return message.SUCCESS_UPDATE_ITEM //200
                         } else {
@@ -75,7 +80,7 @@ const atualizarIdade = async function (id, idade, contentType) {
 }
 
 //Funcão para tratar a excluir um genero no DAO
-const excluirIdade = async function (id) {
+const excluirSexo = async function (id) {
     try {
 
         // Verifica se o ID foi passado corretamente
@@ -83,16 +88,16 @@ const excluirIdade = async function (id) {
             return message.ERROR_REQUIRED_FIELDS // 400 
         }
         if (id) {
-            let verificar = await idadeDAO.selectByIdIdadeInd(parseInt(id))
+            let verificar = await sexoDAO.selectByIdSexo(parseInt(id))
             console.log(verificar)
 
             if (verificar != false || typeof (verificar) == 'object') {
                 //Se existir, faremos o delete
                 if (verificar.length > 0) {
                     //delete
-                    let resultIdade = await idadeDAO.deleteIdadeInd(parseInt(id))
-                    console.log(resultIdade)
-                    if (resultIdade) {
+                    let resultSexo = await sexoDAO.deleteSexo(parseInt(id))
+                    console.log(resultSexo)
+                    if (resultSexo) {
                         return message.SUCCESS_DELETED_ITEM
                     } else {
                         return message.ERROR_NOT_DELETE
@@ -112,24 +117,24 @@ const excluirIdade = async function (id) {
 }
 
 //Funcão para tratar o retorno de generos do DAO
-const listarIdade = async function () {
+const listarSexo = async function () {
     try {
 
         //Objeto do tipo JSON
-        let dadosIdade = {}
+        let dadosSexo = {}
 
         //Chama a função para retornar os filmes cadastrados 
-        let resultIdade = await idadeDAO.selectAllIdadeInd()
+        let resultSexo = await sexoDAO.selectAllSexo()
 
-        if (resultIdade != false) {
+        if (resultSexo != false) {
             //Criando um JSON de retorno de dados para a API 
-            if (resultIdade.length > 0) {
-                dadosIdade.status = true
-                dadosIdade.status_code = 200
-                dadosIdade.items = resultIdade.length
-                dadosIdade.ages = resultIdade
+            if (resultSexo.length > 0) {
+                dadosSexo.status = true
+                dadosSexo.status_code = 200
+                dadosSexo.items = resultSexo.length
+                dadosSexo.sexos = resultSexo
 
-                return dadosIdade
+                return dadosSexo
             } else {
                 return message.ERROR_NO_FOUND //404
             }
@@ -143,23 +148,23 @@ const listarIdade = async function () {
 }
 
 //Funcão para tratar o retorno de um genero filtrando pelo id do DAO
-const buscarIdade = async function (id) {
+const buscarSexo = async function (id) {
 
     try {
         if (id == '' || id == undefined || id == null || isNaN(id) || id <= 0) {
             return message.ERROR_REQUIRED_FIELDS
         } else {
-            dadosIdade = {}
+            dadosSexo = {}
 
-            let resultIdade = await idadeDAO.selectByIdIdadeInd(parseInt(id))
-            if (resultIdade != false || typeof (resultIdade) == 'object') {
-                if (resultIdade.length > 0) {
+            let resultSexo = await sexoDAO.selectByIdSexo(parseInt(id))
+            if (resultSexo != false || typeof (resultSexo) == 'object') {
+                if (resultSexo.length > 0) {
 
-                    dadosIdade.status = true
-                    dadosIdade.status_code = 200
-                    dadosIdade.genero = resultIdade
+                    dadosSexo.status = true
+                    dadosSexo.status_code = 200
+                    dadosSexo.sexo = resultSexo
 
-                    return dadosIdade
+                    return dadosSexo
                 } else {
                     return message.ERROR_NO_FOUND
                 }
@@ -173,9 +178,9 @@ const buscarIdade = async function (id) {
 }
 
 module.exports = {
-    atualizarIdade,
-    excluirIdade,
-    listarIdade,
-    buscarIdade,
-    inserirIdade
+    atualizarSexo,
+    excluirSexo,
+    listarSexo,
+    buscarSexo,
+    inserirSexo
 }

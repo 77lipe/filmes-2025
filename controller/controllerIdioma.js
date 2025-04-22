@@ -14,9 +14,9 @@ const inserirIdioma = async function (idioma, contentType) {
                 return message.ERROR_REQUIRED_FIELDS //400
             } else {
                 //Chama a função para inserir no BD e aguarda o retorno da função 
-                let resultIdade = await idiomaDAO.inserirIdioma(idade)
+                let resultIdioma = await idiomaDAO.inserirIdioma(idioma)
 
-                if (resultIdade) {
+                if (resultIdioma) {
                     return message.SUCCESS_CREATED_ITEM //201
                 } else
                     return message.ERROR_INTERNAL_SERVER //500

@@ -20,7 +20,7 @@ const inserirPremiacao = async function (premiacao) {
                                             nome
                                         )
                                         values(
-                                            '${premiacao.nome}',
+                                            '${premiacao.nome}'
 
                                         )`
 

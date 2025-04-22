@@ -1,22 +1,28 @@
-const message = require('../modulo/config.js')
-const idadeDAO = require('../model/DAO/idadeInd.js')
+/************************************************************************************
+ * Objetivo: Controller responsável pela regra de negócio referente ao CRUD de Premiacao
+ * Data: 18/02/2025
+ * Autor: Felipe Vieira dos Santos
+ * Versão: 1.0
+************************************************************************************/
 
-//Funcão para tratar a inserção de um novo genero no DAO
-const inserirIdade = async function (idade, contentType) {
+const message = require('../modulo/config.js')
+const premiacaoDAO = require('../model/DAO/premiacao.js')
+
+//Funcão para tratar a inserção de um novo filme no DAO
+const inserirPremiacao = async function (premiacao, contentType) {
 
     try {
 
         if (String(contentType).toLocaleLowerCase() == 'application/json') {
 
-            if (idade.idadeIndicativa == '' || idade.idadeIndicativa == undefined || idade.idadeIndicativa == null || idade.idadeIndicativa.length > 15 ||
-                idade.descricao                   == ''   ||  idade.descricao          == undefined    || idade.descricao            == null     
-             ) {
+            if (premiacao.nome == '' || premiacao.nome == undefined || premiacao.nome == null || premiacao.nome.length > 45
+            ) {
                 return message.ERROR_REQUIRED_FIELDS //400
             } else {
                 //Chama a função para inserir no BD e aguarda o retorno da função 
-                let resultIdade = await idadeDAO.inserirIdadeInd(idade)
+                let resultpremiacao = await premiacaoDAO.inserirPremiacao(premiacao)
 
-                if (resultIdade) {
+                if (resultpremiacao) {
                     return message.SUCCESS_CREATED_ITEM //201
                 } else
                     return message.ERROR_INTERNAL_SERVER //500
@@ -31,28 +37,27 @@ const inserirIdade = async function (idade, contentType) {
 }
 
 //Funcão para tratar a atualização de um novo genero no DAO
-const atualizarIdade = async function (id, idade, contentType) {
+const atualizarPremiacao = async function (id, premiacao, contentType) {
     try {
         if (String(contentType).toLocaleLowerCase() == 'application/json') {
 
             if (id == '' || id == undefined || id == null || isNaN(id) || id <= 0 ||
-            idade.idadeIndicativa == '' || idade.idadeIndicativa == undefined || idade.idadeIndicativa == null || idade.idadeIndicativa.length > 15 ||
-            idade.descricao                   == ''   ||  idade.descricao          == undefined    || idade.descricao            == null     
+            premiacao.nome == '' || premiacao.nome == undefined || premiacao.nome == null || premiacao.nome.length > 45
 
             ) {
                 return message.ERROR_REQUIRED_FIELDS //400
             } else {
                 //Validação para verificar se o ID existe no BD
-                let resultIdade = await idadeDAO.selectByIdIdadeInd(parseInt(id))
+                let resultpremiacao = await premiacaoDAO.selectByIdPremiacao(parseInt(id))
 
-                if (resultIdade != false || typeof (resultIdade) == 'object') {
-                    if (resultIdade.length > 0) {
+                if (resultpremiacao != false || typeof (resultpremiacao) == 'object') {
+                    if (resultpremiacao.length > 0) {
                         //Update
 
                         //adiciona o ID do filme no JSON com os dados
-                        idade.id = parseInt(id)
+                        premiacao.id = parseInt(id)
 
-                        let result = await idadeDAO.atualizarIdadeInd(idade)
+                        let result = await premiacaoDAO.atualizarPremiacao(premiacao)
                         if (result) {
                             return message.SUCCESS_UPDATE_ITEM //200
                         } else {
@@ -75,7 +80,7 @@ const atualizarIdade = async function (id, idade, contentType) {
 }
 
 //Funcão para tratar a excluir um genero no DAO
-const excluirIdade = async function (id) {
+const excluirPremiacao = async function (id) {
     try {
 
         // Verifica se o ID foi passado corretamente
@@ -83,16 +88,16 @@ const excluirIdade = async function (id) {
             return message.ERROR_REQUIRED_FIELDS // 400 
         }
         if (id) {
-            let verificar = await idadeDAO.selectByIdIdadeInd(parseInt(id))
+            let verificar = await premiacaoDAO.selectByIdPremiacao(parseInt(id))
             console.log(verificar)
 
             if (verificar != false || typeof (verificar) == 'object') {
                 //Se existir, faremos o delete
                 if (verificar.length > 0) {
                     //delete
-                    let resultIdade = await idadeDAO.deleteIdadeInd(parseInt(id))
-                    console.log(resultIdade)
-                    if (resultIdade) {
+                    let resultpremiacao = await premiacaoDAO.deletePremiacao(parseInt(id))
+                    console.log(resultpremiacao)
+                    if (resultpremiacao) {
                         return message.SUCCESS_DELETED_ITEM
                     } else {
                         return message.ERROR_NOT_DELETE
@@ -112,24 +117,24 @@ const excluirIdade = async function (id) {
 }
 
 //Funcão para tratar o retorno de generos do DAO
-const listarIdade = async function () {
+const listarPremiacao = async function () {
     try {
 
         //Objeto do tipo JSON
-        let dadosIdade = {}
+        let dadosPremiacao = {}
 
         //Chama a função para retornar os filmes cadastrados 
-        let resultIdade = await idadeDAO.selectAllIdadeInd()
+        let resultpremiacao = await sexoDAO.selectAllSexo()
 
-        if (resultIdade != false) {
+        if (resultpremiacao != false) {
             //Criando um JSON de retorno de dados para a API 
-            if (resultIdade.length > 0) {
-                dadosIdade.status = true
-                dadosIdade.status_code = 200
-                dadosIdade.items = resultIdade.length
-                dadosIdade.ages = resultIdade
+            if (resultpremiacao.length > 0) {
+                dadosPremiacao.status = true
+                dadosPremiacao.status_code = 200
+                dadosPremiacao.items = resultpremiacao.length
+                dadosPremiacao.premiacoes = resultpremiacao
 
-                return dadosIdade
+                return dadosPremiacao
             } else {
                 return message.ERROR_NO_FOUND //404
             }
@@ -143,23 +148,23 @@ const listarIdade = async function () {
 }
 
 //Funcão para tratar o retorno de um genero filtrando pelo id do DAO
-const buscarIdade = async function (id) {
+const buscarPremiacao = async function (id) {
 
     try {
         if (id == '' || id == undefined || id == null || isNaN(id) || id <= 0) {
             return message.ERROR_REQUIRED_FIELDS
         } else {
-            dadosIdade = {}
+            dadosPremiacao = {}
 
-            let resultIdade = await idadeDAO.selectByIdIdadeInd(parseInt(id))
-            if (resultIdade != false || typeof (resultIdade) == 'object') {
-                if (resultIdade.length > 0) {
+            let resultpremiacao = await premiacaoDAO.selectByIdPremiacao(parseInt(id))
+            if (resultpremiacao != false || typeof (resultpremiacao) == 'object') {
+                if (resultpremiacao.length > 0) {
 
-                    dadosIdade.status = true
-                    dadosIdade.status_code = 200
-                    dadosIdade.genero = resultIdade
+                    dadosPremiacao.status = true
+                    dadosPremiacao.status_code = 200
+                    dadosPremiacao.sexo = resultpremiacao
 
-                    return dadosIdade
+                    return dadosPremiacao
                 } else {
                     return message.ERROR_NO_FOUND
                 }
@@ -173,9 +178,9 @@ const buscarIdade = async function (id) {
 }
 
 module.exports = {
-    atualizarIdade,
-    excluirIdade,
-    listarIdade,
-    buscarIdade,
-    inserirIdade
+    atualizarPremiacao,
+    excluirPremiacao,
+    listarPremiacao,
+    buscarPremiacao,
+    inserirPremiacao
 }

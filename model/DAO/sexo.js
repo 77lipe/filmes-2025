@@ -20,7 +20,7 @@ const inserirSexo = async function (sexo) {
                                             sexo
                                         )
                                         values(
-                                            '${sexo.sexo}',
+                                            '${sexo.sexo}'
 
                                         )`
 
@@ -40,7 +40,7 @@ const inserirSexo = async function (sexo) {
 //UPDATE DO SEXO
 const atualizarSexo = async function (sexo) {
     try {
-        let sql = `update tbl_sexo set         sexo = '${sexo.sexo}',
+        let sql = `update tbl_sexo set         sexo = '${sexo.sexo}'
                                               where id = ${sexo.id}`
 
         let resultSexo = await prisma.$executeRawUnsafe(sql)

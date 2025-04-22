@@ -131,8 +131,8 @@ const listarGeneros = async function () {
             if (resultGenero.length > 0) {
                 dadosGenero.status = true
                 dadosGenero.status_code = 200
-                dadosGenero.items = dadosGenero.length
-                dadosGenero.genres = dadosGenero
+                dadosGenero.items = resultGenero.length
+                dadosGenero.genres = resultGenero
 
                 return dadosGenero
             } else {

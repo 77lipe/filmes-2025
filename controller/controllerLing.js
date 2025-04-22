@@ -1,22 +1,28 @@
-const message = require('../modulo/config.js')
-const idadeDAO = require('../model/DAO/idadeInd.js')
+/************************************************************************************
+ * Objetivo: Controller responsável pela regra de negócio referente ao CRUD de Linguagem
+ * Data: 18/02/2025
+ * Autor: Felipe Vieira dos Santos
+ * Versão: 1.0
+************************************************************************************/
 
-//Funcão para tratar a inserção de um novo genero no DAO
-const inserirIdade = async function (idade, contentType) {
+const message = require('../modulo/config.js')
+const linguagemDAO = require('../model/DAO/linguagem.js')
+
+//Funcão para tratar a inserção de um novo filme no DAO
+const inserirLinguagem = async function (linguagem, contentType) {
 
     try {
 
         if (String(contentType).toLocaleLowerCase() == 'application/json') {
 
-            if (idade.idadeIndicativa == '' || idade.idadeIndicativa == undefined || idade.idadeIndicativa == null || idade.idadeIndicativa.length > 15 ||
-                idade.descricao                   == ''   ||  idade.descricao          == undefined    || idade.descricao            == null     
-             ) {
+            if (linguagem.linguagem == '' || linguagem.linguagem == undefined || linguagem.linguagem == null || linguagem.linguagem.length > 45
+            ) {
                 return message.ERROR_REQUIRED_FIELDS //400
             } else {
                 //Chama a função para inserir no BD e aguarda o retorno da função 
-                let resultIdade = await idadeDAO.inserirIdadeInd(idade)
+                let resultLinguagem = await linguagemDAO.inserirLinguagem(linguagem)
 
-                if (resultIdade) {
+                if (resultLinguagem) {
                     return message.SUCCESS_CREATED_ITEM //201
                 } else
                     return message.ERROR_INTERNAL_SERVER //500
@@ -31,28 +37,27 @@ const inserirIdade = async function (idade, contentType) {
 }
 
 //Funcão para tratar a atualização de um novo genero no DAO
-const atualizarIdade = async function (id, idade, contentType) {
+const atualizarLinguagem = async function (id, linguagem, contentType) {
     try {
         if (String(contentType).toLocaleLowerCase() == 'application/json') {
 
             if (id == '' || id == undefined || id == null || isNaN(id) || id <= 0 ||
-            idade.idadeIndicativa == '' || idade.idadeIndicativa == undefined || idade.idadeIndicativa == null || idade.idadeIndicativa.length > 15 ||
-            idade.descricao                   == ''   ||  idade.descricao          == undefined    || idade.descricao            == null     
+            linguagem.linguagem == '' || linguagem.linguagem == undefined || linguagem.linguagem == null || linguagem.linguagem.length > 45
 
             ) {
                 return message.ERROR_REQUIRED_FIELDS //400
             } else {
                 //Validação para verificar se o ID existe no BD
-                let resultIdade = await idadeDAO.selectByIdIdadeInd(parseInt(id))
+                let resultLinguagem = await linguagemDAO.selectByIdLinguagem(parseInt(id))
 
-                if (resultIdade != false || typeof (resultIdade) == 'object') {
-                    if (resultIdade.length > 0) {
+                if (resultLinguagem != false || typeof (resultLinguagem) == 'object') {
+                    if (resultLinguagem.length > 0) {
                         //Update
 
                         //adiciona o ID do filme no JSON com os dados
-                        idade.id = parseInt(id)
+                        linguagem.id = parseInt(id)
 
-                        let result = await idadeDAO.atualizarIdadeInd(idade)
+                        let result = await linguagemDAO.atualizarLinguagem(linguagem)
                         if (result) {
                             return message.SUCCESS_UPDATE_ITEM //200
                         } else {
@@ -75,7 +80,7 @@ const atualizarIdade = async function (id, idade, contentType) {
 }
 
 //Funcão para tratar a excluir um genero no DAO
-const excluirIdade = async function (id) {
+const excluirLinguagem = async function (id) {
     try {
 
         // Verifica se o ID foi passado corretamente
@@ -83,16 +88,16 @@ const excluirIdade = async function (id) {
             return message.ERROR_REQUIRED_FIELDS // 400 
         }
         if (id) {
-            let verificar = await idadeDAO.selectByIdIdadeInd(parseInt(id))
+            let verificar = await linguagemDAO.selectByIdLinguagem(parseInt(id))
             console.log(verificar)
 
             if (verificar != false || typeof (verificar) == 'object') {
                 //Se existir, faremos o delete
                 if (verificar.length > 0) {
                     //delete
-                    let resultIdade = await idadeDAO.deleteIdadeInd(parseInt(id))
-                    console.log(resultIdade)
-                    if (resultIdade) {
+                    let resultLinguagem = await linguagemDAO.deleteLinguagem(parseInt(id))
+                    console.log(resultLinguagem)
+                    if (resultLinguagem) {
                         return message.SUCCESS_DELETED_ITEM
                     } else {
                         return message.ERROR_NOT_DELETE
@@ -112,24 +117,24 @@ const excluirIdade = async function (id) {
 }
 
 //Funcão para tratar o retorno de generos do DAO
-const listarIdade = async function () {
+const listarLinguagem = async function () {
     try {
 
         //Objeto do tipo JSON
-        let dadosIdade = {}
+        let dadosLinguagem = {}
 
         //Chama a função para retornar os filmes cadastrados 
-        let resultIdade = await idadeDAO.selectAllIdadeInd()
+        let resultLinguagem = await linguagemDAO.selectAllLinguagem()
 
-        if (resultIdade != false) {
+        if (resultLinguagem != false) {
             //Criando um JSON de retorno de dados para a API 
-            if (resultIdade.length > 0) {
-                dadosIdade.status = true
-                dadosIdade.status_code = 200
-                dadosIdade.items = resultIdade.length
-                dadosIdade.ages = resultIdade
+            if (resultLinguagem.length > 0) {
+                dadosLinguagem.status = true
+                dadosLinguagem.status_code = 200
+                dadosLinguagem.items = resultLinguagem.length
+                dadosLinguagem.linguages = resultLinguagem
 
-                return dadosIdade
+                return dadosLinguagem
             } else {
                 return message.ERROR_NO_FOUND //404
             }
@@ -142,24 +147,26 @@ const listarIdade = async function () {
     }
 }
 
+console.log(listarLinguagem())
+
 //Funcão para tratar o retorno de um genero filtrando pelo id do DAO
-const buscarIdade = async function (id) {
+const buscarLinguagem = async function (id) {
 
     try {
         if (id == '' || id == undefined || id == null || isNaN(id) || id <= 0) {
             return message.ERROR_REQUIRED_FIELDS
         } else {
-            dadosIdade = {}
+            dadosLinguagem = {}
 
-            let resultIdade = await idadeDAO.selectByIdIdadeInd(parseInt(id))
-            if (resultIdade != false || typeof (resultIdade) == 'object') {
-                if (resultIdade.length > 0) {
+            let resultLinguagem = await linguagemDAO.selectByIdLinguagem(parseInt(id))
+            if (resultLinguagem != false || typeof (resultLinguagem) == 'object') {
+                if (resultLinguagem.length > 0) {
 
-                    dadosIdade.status = true
-                    dadosIdade.status_code = 200
-                    dadosIdade.genero = resultIdade
+                    dadosLinguagem.status = true
+                    dadosLinguagem.status_code = 200
+                    dadosLinguagem.linguagem = resultLinguagem
 
-                    return dadosIdade
+                    return dadosLinguagem
                 } else {
                     return message.ERROR_NO_FOUND
                 }
@@ -173,9 +180,9 @@ const buscarIdade = async function (id) {
 }
 
 module.exports = {
-    atualizarIdade,
-    excluirIdade,
-    listarIdade,
-    buscarIdade,
-    inserirIdade
+    atualizarLinguagem,
+    excluirLinguagem,
+    listarLinguagem,
+    buscarLinguagem,
+    inserirLinguagem
 }

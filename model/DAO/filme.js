@@ -13,9 +13,6 @@ const prisma = new PrismaClient()
 //INSERT DO NOVO FILME
 const insertFilme = async function(filme){
     //Instancia (criar um objt a ser utilizado) a biblioteca do prisma/client
-
-    
-    
     try {
         
             let sql = `insert into tbl_filme (  

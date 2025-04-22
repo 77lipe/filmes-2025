@@ -37,12 +37,13 @@ const inserirIdadeInd = async function (idade) {
         return false
     }
 }
+// console.log(inserirIdadeInd("Livre","TESTE"))
 
 //UPDATE DA IDADE
 const atualizarIdadeInd = async function (idade) {
     try {
-        let sql = `update tbl_idadeIndicativa set         idade = '${idade.idade}', descricao = '${idade.descricao}',
-                                              where id = ${genero.id}`
+        let sql = `update tbl_idadeIndicativa set         idadeIndicativa = '${idade.idadeIndicativa}', descricao = '${idade.descricao}'
+                                              where id = ${idade.id}`
 
         let resultIdadeInd = await prisma.$executeRawUnsafe(sql)
 

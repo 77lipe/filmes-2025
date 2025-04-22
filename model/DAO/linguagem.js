@@ -20,7 +20,7 @@ const inserirLinguagem = async function (linguagem) {
                                             linguagem
                                         )
                                         values(
-                                            '${linguagem.linguagem}',
+                                            '${linguagem.linguagem}'
 
                                         )`
 
@@ -37,10 +37,12 @@ const inserirLinguagem = async function (linguagem) {
 }
 }
 
+console.log(inserirLinguagem())
+
 //UPDATE DO LINGUAGUENS
 const atualizarLinguagem = async function (linguagem) {
     try {
-        let sql = `update tbl_linguagem set         linguagem = '${linguagem.linguagem}',
+        let sql = `update tbl_linguagem set         linguagem = '${linguagem.linguagem}'
                                               where id = ${linguagem.id}`
 
         let resultLinguagem = await prisma.$executeRawUnsafe(sql)
