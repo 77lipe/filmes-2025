@@ -100,7 +100,7 @@ app.put('/v1/controle-filmes/filme/:id', cors(), bodyParserJSON, async function 
 
 
 //LINGUAGEM
-const controllerLinguagem = require('./controller/controllerLing')
+const controllerLinguagem = require('./controller/controllerLing.js')
 app.post('/v1/controle-filmes/linguagem', cors(), bodyParserJSON, async function(request, response){
 
     //Recebe o content type da requisição
@@ -220,7 +220,7 @@ app.put('/v1/controle-filmes/sexo/:id', cors(), bodyParserJSON, async function (
 
 
 //GENERO
-const controllerGen = require('./controller/controllerGenero')
+const controllerGen = require('./controller/controllerGenero.js')
 app.post('/v1/controle-filmes/genero', cors(), bodyParserJSON, async function(request, response){
 
     //Recebe o content type da requisição

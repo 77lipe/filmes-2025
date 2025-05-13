@@ -21,7 +21,9 @@ const insertFilme = async function(filme){
                                                 sinopse,
                                                 data_lancamento,
                                                 foto_capa,
-                                                link_trailer
+                                                link_trailer,
+                                                id_idade,
+                                                id_idioma
                                             )
                                             values(
                                                 '${filme.nome}',
@@ -29,7 +31,10 @@ const insertFilme = async function(filme){
                                                 '${filme.sinopse}',
                                                 '${filme.data_lancamento}',
                                                 '${filme.foto_capa}',
-                                                '${filme.link_trailer}'
+                                                '${filme.link_trailer}',
+                                                '${filme.id_idade}',
+                                                '${filme.id_idioma}'
+
                                             )`
 
             // Executa o scriptSQL no BD e aguarda o retorno no mesmo para saber se deu certo
@@ -45,6 +50,7 @@ const insertFilme = async function(filme){
     }
 }
 
+
 //ATUALIZAR UM FILME EXISTENTE
 const updateFilme = async function(filme){
     try {
@@ -54,6 +60,9 @@ const updateFilme = async function(filme){
                                                 data_lancamento = '${filme.data_lancamento}',
                                                 foto_capa = '${filme.foto_capa}',
                                                 link_trailer = '${filme.link_trailer}'
+                                                id_idade = '${filme.id_idade}',
+                                                id_idioma = '${filme.id_idioma}'
+                                                
                                 where id = ${filme.id}`
 
     let resultFilme = await prisma.$executeRawUnsafe(sql)

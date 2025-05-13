@@ -157,7 +157,7 @@ const buscarIdade = async function (id) {
 
                     dadosIdade.status = true
                     dadosIdade.status_code = 200
-                    dadosIdade.genero = resultIdade
+                    dadosIdade.idade = resultIdade
 
                     return dadosIdade
                 } else {

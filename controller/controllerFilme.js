@@ -8,6 +8,11 @@
 const message = require('../modulo/config.js')
 const filmeDAO = require('../model/DAO/filme.js')
 
+//Import das controller necessárias para fazer os relacionamentos
+const controllerIdade   = require('./controllerIdade.js')
+const controllerIdioma = require('./controllerIdioma.js')
+// const controllerFilmeGenero     = require('./controllerFilmeGenero.js')
+
 //Funcão para tratar a inserção de um novo filme no DAO
 const inserirFilme = async function (filme, contentType){
     
@@ -21,7 +26,9 @@ const inserirFilme = async function (filme, contentType){
             filme.sinopse                   == ''   ||  filme.sinopse          == undefined    || filme.sinopse            == null     ||
             filme.data_lancamento           == ''   ||  filme.data_lancamento  == undefined    || filme.data_lancamento    == null     ||      filme.data_lancamento.length > 10 ||
             filme.foto_capa.length          > 200   ||  filme.foto_capa        == undefined    ||
-            filme.link_trailer.length       > 200   ||  filme.link_trailer     == undefined
+            filme.link_trailer.length       > 200   ||  filme.link_trailer     == undefined    ||
+            filme.id_idade  == ''                   ||  filme.id_idade         == undefined    || 
+            filme.id_idioma  == ''                  ||  filme.id_idioma        == undefined
         )
         {
             return message.ERROR_REQUIRED_FIELDS //400
@@ -55,7 +62,9 @@ const atualizarFilme = async function (id, filme, contentType){
                     filme.sinopse                   == ''   ||  filme.sinopse          == undefined    || filme.sinopse            == null     ||
                     filme.data_lancamento           == ''   ||  filme.data_lancamento  == undefined    || filme.data_lancamento    == null     ||      filme.data_lancamento.length > 10 ||
                     filme.foto_capa.length          > 200   ||  filme.foto_capa        == undefined    ||
-                    filme.link_trailer.length       > 200   ||  filme.link_trailer     == undefined
+                    filme.link_trailer.length       > 200   ||  filme.link_trailer     == undefined    ||
+                    filme.id_idade  == ''                   ||  filme.id_idade         == undefined    || 
+                    filme.id_idioma  == ''                  ||  filme.id_idioma        == undefined
                 )
                 {
                     return message.ERROR_REQUIRED_FIELDS //400
@@ -133,6 +142,8 @@ const excluirFilme = async function (id){
 const listarFilme = async function (){
     try {
 
+        let arrayFilmes = []
+
         //Objeto do tipo JSON
         let dadosFilme = {}
 
@@ -145,7 +156,33 @@ const listarFilme = async function (){
                 dadosFilme.status = true
                 dadosFilme.status_code = 200
                 dadosFilme.items = resultFilme.length
-                dadosFilme.films = resultFilme
+
+                for(const itemFilme of resultFilme){
+                    
+                    let dadosIdade = await controllerIdade.buscarIdade(itemFilme.id_idade)
+
+                    itemFilme.idade = dadosIdade.idade
+
+                    delete itemFilme.id_idade
+
+                    arrayFilmes.push(itemFilme)
+
+                }
+
+                for(const itemFilme of resultFilme){
+
+                    let dadosIdioma = await controllerIdioma.buscarIdioma(itemFilme.id_idioma)
+
+                    itemFilme.idioma = dadosIdioma.idioma
+
+                    delete itemFilme.id_idade
+
+                    arrayFilmes.push(itemFilme)
+
+                }
+                
+
+                dadosFilme.films = arrayFilmes
                 
                 return dadosFilme
             }else{
@@ -164,6 +201,9 @@ const listarFilme = async function (){
 const buscarFilme = async function (id){
 
     try {
+
+        let arrayFilmes = []
+
         if(id == '' || id == undefined || id == null || isNaN(id) || id <= 0 ){
             return message.ERROR_REQUIRED_FIELDS
         }else{
@@ -175,9 +215,29 @@ const buscarFilme = async function (id){
                    
                         dadosFilme.status = true
                         dadosFilme.status_code = 200
-                        dadosFilme.filme = resultFilme
 
-                        return dadosFilme
+                        
+                     //Precisamos utilizar o for of, pois o foreach não consegue trabalhar com 
+                // requisições async com await
+                for(const itemFilme of resultFilme){
+                    //Busca os dados da classificação na controller de classificacao
+                    let dadosClassificacao = await controllerClassificacao.buscarIdade(itemFilme.id_classificacao)
+                    
+                    //Adiciona um atributo classificação no JSON de filmes e coloca os dados da classificação
+                    itemFilme.classificacao = dadosClassificacao.classificacao
+                    
+                    //Remover um atributo do JSON
+                    delete itemFilme.id_classificacao
+                    
+                    //Adiciona em um novo array o JSON de filmes com a sua nova estrutura de dados
+                    arrayFilmes.push(itemFilme)
+ 
+                }
+                
+                dadosFilme.films = arrayFilmes
+
+
+                    return dadosFilme
                 }else{
                     return message.ERROR_NO_FOUND
                 }
